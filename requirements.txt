@@ -1,0 +1,4 @@
+coloredlogs
+requests
+requests-oauthlib
+oauthlib
