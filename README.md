@@ -3,7 +3,7 @@ ERPNext REST API Client
 
 ### Login in
 ```python
-from .erpnext_client.query import ERPNextClient
+from erpnext_client.query import ERPNextClient
 
 erp_client = ERPNextClient(app.config["ERPNEXT_API_HOST"],
                            app.config["ERPNEXT_API_USERNAME"],
