@@ -7,6 +7,7 @@ from .schemas import (
     ERPCustomerSchema,
     ERPUserSchema,
     ERPContactSchema,
+    ERPAddressSchema,
     ERPDynamicLinkSchema,
     ERPBinSchema,
     ERPWebsiteSlideshow,
@@ -37,14 +38,15 @@ class ERPResource:
 
         return instance
 
-    def list(self, erp_fields=[], filters=[], schema_fields=None):
+    def list(self, erp_fields=[], filters=[], schema_fields=None, parent=None):
         """
         Return a list of documents matching the given criterias
         """
         try:
             response = self.client.list_resource(self.doctype,
                                                  fields=erp_fields,
-                                                 filters=filters)
+                                                 filters=filters,
+                                                 parent=parent)
         except requests.exceptions.HTTPError as e:
             print(e.response.text)
             e.response.raise_for_status()
@@ -55,11 +57,11 @@ class ERPResource:
 
         return instances
 
-    def first(self, erp_fields=[], filters=[], schema_fields=None):
+    def first(self, erp_fields=[], filters=[], schema_fields=None, parent=None):
         """
         Return first document matching criteras
         """
-        documents = self.list(erp_fields, filters, schema_fields)
+        documents = self.list(erp_fields, filters, schema_fields, parent)
         if len(documents) == 0:
             raise self.DoesNotExist
 
@@ -77,6 +79,18 @@ class ERPResource:
         instance, errors = self.schema(strict=True).load(data=response.json()['data'])
 
         return instance
+
+    def update(self, name, data):
+        """
+        Update a document of the current type with given name and data
+        """
+        try:
+            response = self.client.update_resource(self.doctype, name, data)
+        except requests.exceptions.HTTPError as e:
+            e.response.raise_for_status()
+
+        return True
+
 
 
 class ERPDynamicLink(ERPResource):
@@ -107,6 +121,10 @@ class ERPCustomer(ERPResource):
 class ERPContact(ERPResource):
     doctype = "Contact"
     schema = ERPContactSchema
+
+class ERPAddress(ERPResource):
+    doctype = "Address"
+    schema = ERPAddressSchema
 
 
 class ERPSalesOrder(ERPResource):

@@ -20,33 +20,53 @@ def renew_login_if_expired(function):
 
 
 class ERPNextClient:
-    def __init__(self, host, username, password):
-        self.username = username
+    def __init__(self, host, api_key, api_secret):
         self.host = host
-        self.password = password
+        self.api_key = api_key
+        self.api_secret = api_secret
+
+        self.headers = {
+            'Accept': 'application/json',
+            'Authorization': 'token {0}:{1}'.format(self.api_key,
+                                                    self.api_secret)
+        }
 
         self.session = requests.Session()
+        self.session.headers.update(self.headers)
 
         self._login_in_progress = False
         self._next_login = None
 
         self.api_root = "https://{0}/api/".format(self.host)
 
-    @renew_login_if_expired
-    def _post(self, path, data={}):
+    def _put(self, path, data={}):
         if data is not {}:
-            LOGGER.debug("POST payload: {0}".format(data))
-        r = self.session.post("{0}{1}".format(self.api_root,
-                                              path),
-                              data=data)
+            LOGGER.debug("PUT payload: {0}".format(data))
+
+        r = self.session.put("{0}{1}".format(self.api_root,
+                                             path),
+                              json=data)
+        LOGGER.debug(r.text)
 
         if r.status_code != requests.codes.ok:
-            LOGGER.error(r.text)
             r.raise_for_status()
 
         return r
 
-    @renew_login_if_expired
+    def _post(self, path, data={}):
+        if data is not {}:
+            LOGGER.debug("POST payload: {0}".format(data))
+
+        r = self.session.post("{0}{1}".format(self.api_root,
+                                              path),
+                              json=data)
+        LOGGER.debug(r.text)
+
+        if r.status_code != requests.codes.ok:
+            r.raise_for_status()
+
+        return r
+
     def _get(self, path, params={}):
         r = self.session.get("{0}{1}".format(self.api_root,
                                              path),
@@ -58,8 +78,7 @@ class ERPNextClient:
 
     def login(self):
         self._login_in_progress = True
-        r = self._post("method/login", data={'usr': self.username,
-                                             'pwd': self.password})
+        r = self._get("method/frappe.auth.get_logged_user")
 
         success = r.status_code == requests.codes.ok
 
@@ -79,22 +98,34 @@ class ERPNextClient:
     def query(self, aERPResource):
         return aERPResource(self)
 
-    def list_resource(self, resource_type_name, fields=[], filters=[]):
+    def list_resource(self, resource_type_name, fields=[], filters=[], parent=None):
         params = {"fields": json.dumps(fields),
                   "filters": json.dumps(filters)}
 
+        if parent is not None:
+            params.update({"parent": parent})
+
         return self._get("resource/{0}".format(resource_type_name), params)
 
-    def get_resource(self, resource_type_name, resource_name, fields=[], filters=[]):
+    def get_resource(self, resource_type_name, resource_name, fields=[], filters=[], parent=None):
         params = {"fields": fields,
                   "filters": json.dumps(filters)}
+
+        if parent is not None:
+            params.update({"parent": parent})
 
         return self._get("resource/{0}/{1}".format(resource_type_name,
                                                    resource_name),
                          params=params)
 
+    def update_resource(self, resource_type_name, resource_name, data):
+        encapsulated_data = {"data": json.dumps(data)}
+        return self._put("resource/{0}/{1}".format(resource_type_name, resource_name),
+                         encapsulated_data)
+
+
     def create_resource(self, resource_type_name, data):
-        encapsulated_data = {'data': json.dumps(data)}
+        encapsulated_data = {"data": json.dumps(data)}
         return self._post("resource/{0}".format(resource_type_name),
                           encapsulated_data)
 
@@ -103,5 +134,6 @@ class ERPNextClient:
                                     data={'customer': customer,
                                           'title': title,
                                           'naming_series': naming_series,
+                                          'rounded_total': 0,
                                           'order_type': order_type,
                                           'items': items})

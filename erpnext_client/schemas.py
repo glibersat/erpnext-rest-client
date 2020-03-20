@@ -52,12 +52,24 @@ class ERPItemGroupSchema(ERPDocument):
 
 class ERPCustomerSchema(ERPDocument):
     email = fields.Email(load_from="email")
+    primary_address = fields.String(load_from="primary_address")
 
 
 class ERPContactSchema(ERPDocument):
     email = fields.Email(load_from="email_id")
     first_name = fields.String(load_from="first_name")
     last_name = fields.String(load_from="last_name")
+    mobile_no = fields.String(load_from="mobile_no")
+
+
+class ERPAddressSchema(ERPDocument):
+    title = fields.String(load_from="address_title")
+    address_type = fields.String(load_from="address_type")
+    address_line1 = fields.String(load_from="address_line1")
+    address_line2 = fields.String(load_from="address_line2")
+    pincode = fields.String(load_from="pincode", allow_none=True)
+    city = fields.String(load_from="city")
+    country = fields.String(load_from="country")
 
 
 class ERPDynamicLinkSchema(ERPDocument):
@@ -75,6 +87,13 @@ class ERPSalesOrderItemSchema(ERPDocument):
     quantity = fields.Int(load_from="qty")
     rate = fields.Float()
     amount = fields.Float(load_from="net_amount")
+    image = fields.String(load_from="image")
+
+
+class ERPSalesOrderTaxes(ERPDocument):
+    name = fields.String()
+    description = fields.String()
+    tax_amount = fields.Float(load_from="tax_amount")
 
 
 class ERPSalesOrderSchema(ERPDocument):
@@ -83,6 +102,7 @@ class ERPSalesOrderSchema(ERPDocument):
     customer = fields.Str()
     amount_total = fields.Float(load_from="grand_total")
     items = fields.Nested(ERPSalesOrderItemSchema, many=True)
+    taxes = fields.Nested(ERPSalesOrderTaxes, many=True)
 
 
 class ERPItemWebsiteSpecificationSchema(ERPDocument):
