@@ -89,7 +89,7 @@ class ERPResource:
         except requests.exceptions.HTTPError as e:
             e.response.raise_for_status()
 
-        return True
+        return response
 
 
 

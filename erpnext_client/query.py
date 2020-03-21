@@ -40,13 +40,12 @@ class ERPNextClient:
         self.api_root = "https://{0}/api/".format(self.host)
 
     def _put(self, path, data={}):
-        if data is not {}:
+        if data is not None:
             LOGGER.debug("PUT payload: {0}".format(data))
 
         r = self.session.put("{0}{1}".format(self.api_root,
                                              path),
                               json=data)
-        LOGGER.debug(r.text)
 
         if r.status_code != requests.codes.ok:
             r.raise_for_status()
@@ -60,7 +59,6 @@ class ERPNextClient:
         r = self.session.post("{0}{1}".format(self.api_root,
                                               path),
                               json=data)
-        LOGGER.debug(r.text)
 
         if r.status_code != requests.codes.ok:
             r.raise_for_status()
@@ -120,6 +118,9 @@ class ERPNextClient:
 
     def update_resource(self, resource_type_name, resource_name, data):
         encapsulated_data = {"data": json.dumps(data)}
+        LOGGER.debug("Updating resource <{0}:{1}> with payload <{2}>".format(resource_type_name,
+                                                                             resource_name,
+                                                                             data))
         return self._put("resource/{0}/{1}".format(resource_type_name, resource_name),
                          encapsulated_data)
 
