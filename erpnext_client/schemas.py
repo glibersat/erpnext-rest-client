@@ -30,6 +30,17 @@ class ERPItemSchema(ERPDocument):
     variants = fields.Nested("ERPItemSchema", many=True)
     website_specifications = fields.Nested('ERPItemWebsiteSpecificationSchema', many=True, load_from='website_sepecifications')
 
+class ERPItemPriceSchema(ERPDocument):
+    item_code = fields.String(load_from="item_code")
+    item_name = fields.String(load_from="item_name")
+    currency = fields.String(load_from="currency")
+    price_list_rate = fields.Float(load_from="price_list_rate")
+
+class ERPPaymentEntrySchema(ERPDocument):
+    payment_type = fields.String(load_from="payment_type")
+    mode_of_payment = fields.String(load_from="mode_of_payment")
+
+
 
 class ERPBinSchema(ERPDocument):
     """
@@ -90,6 +101,10 @@ class ERPSalesOrderItemSchema(ERPDocument):
     image = fields.String(load_from="image")
 
 
+class ERPJournalEntrySchema(ERPDocument):
+    voucher_type = fields.String()
+
+
 class ERPSalesOrderTaxes(ERPDocument):
     name = fields.String()
     description = fields.String()
@@ -100,6 +115,7 @@ class ERPSalesOrderSchema(ERPDocument):
     date = fields.Date(load_from="transaction_date")
     title = fields.Str()
     customer = fields.Str()
+    total = fields.Float(load_from="total")
     amount_total = fields.Float(load_from="grand_total")
     items = fields.Nested(ERPSalesOrderItemSchema, many=True)
     taxes = fields.Nested(ERPSalesOrderTaxes, many=True)

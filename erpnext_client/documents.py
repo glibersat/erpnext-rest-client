@@ -2,6 +2,7 @@ import requests
 
 from .schemas import (
     ERPItemSchema,
+    ERPItemPriceSchema,
     ERPItemGroupSchema,
     ERPSalesOrderSchema,
     ERPCustomerSchema,
@@ -10,6 +11,7 @@ from .schemas import (
     ERPAddressSchema,
     ERPDynamicLinkSchema,
     ERPBinSchema,
+    ERPJournalEntrySchema,
     ERPWebsiteSlideshow,
     ERPWebsiteSlideshowItem
 )
@@ -38,7 +40,7 @@ class ERPResource:
 
         return instance
 
-    def list(self, erp_fields=[], filters=[], schema_fields=None, parent=None):
+    def list(self, erp_fields=[], filters=[], schema_fields=None, parent=None, page_length=None):
         """
         Return a list of documents matching the given criterias
         """
@@ -46,7 +48,8 @@ class ERPResource:
             response = self.client.list_resource(self.doctype,
                                                  fields=erp_fields,
                                                  filters=filters,
-                                                 parent=parent)
+                                                 parent=parent,
+                                                 page_length=page_length)
         except requests.exceptions.HTTPError as e:
             print(e.response.text)
             e.response.raise_for_status()
@@ -98,9 +101,16 @@ class ERPDynamicLink(ERPResource):
     schema = ERPDynamicLinkSchema
 
 
+class ERPItemPrice(ERPResource):
+    doctype = "Item Price"
+    schema = ERPItemPriceSchema
+
+
 class ERPItem(ERPResource):
     doctype = "Item"
     schema = ERPItemSchema
+
+
 
 
 class ERPBin(ERPResource):
@@ -135,6 +145,11 @@ class ERPSalesOrder(ERPResource):
 class ERPUser(ERPResource):
     doctype = "User"
     schema = ERPUserSchema
+
+class ERPJournalEntry(ERPResource):
+    doctype = "Journal Entry"
+    schema = ERPJournalEntrySchema
+
 
 class ERPWebsiteSlideshow(ERPResource):
     doctype = "Website Slideshow"

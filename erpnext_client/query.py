@@ -3,6 +3,8 @@ import json
 import logging
 import requests
 
+from werkzeug.exceptions import NotFound, BadRequest
+
 LOGGER = logging.getLogger(__name__)
 
 def renew_login_if_expired(function):
@@ -61,7 +63,8 @@ class ERPNextClient:
                               json=data)
 
         if r.status_code != requests.codes.ok:
-            r.raise_for_status()
+            raise BadRequest(r.json())
+            # r.raise_for_status()
 
         return r
 
@@ -96,9 +99,10 @@ class ERPNextClient:
     def query(self, aERPResource):
         return aERPResource(self)
 
-    def list_resource(self, resource_type_name, fields=[], filters=[], parent=None):
+    def list_resource(self, resource_type_name, fields=[], filters=[], parent=None, page_length=None):
         params = {"fields": json.dumps(fields),
-                  "filters": json.dumps(filters)}
+                  "filters": json.dumps(filters),
+                  "limit_page_length": page_length}
 
         if parent is not None:
             params.update({"parent": parent})
