@@ -80,7 +80,7 @@ class ERPResource:
         except requests.exceptions.HTTPError as e:
             e.response.raise_for_status()
 
-        instance, errors = self.schema(strict=True).load(data=response.json()['data'])
+        instance, errors = self.schema().load(data=response.json()['data'])
 
         return instance
 

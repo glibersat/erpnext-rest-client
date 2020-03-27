@@ -72,12 +72,18 @@ class ERPContactPhoneSchema(ERPDocument):
     is_primary_mobile_no = fields.Boolean(load_from="is_primary_mobile_no")
 
 
+class ERPContactEmailSchema(ERPDocument):
+    email = fields.String(load_from="email_id")
+    is_primary = fields.Boolean(load_from="is_primary")
+
+
 class ERPContactSchema(ERPDocument):
     email = fields.Email(load_from="email_id")
     first_name = fields.String(load_from="first_name")
     last_name = fields.String(load_from="last_name")
     mobile_no = fields.String(load_from="mobile_no")
     phone_nos = fields.Nested("ERPContactPhoneSchema", load_from="phone_nos", many=True)
+    email_ids = fields.Nested("ERPContactEmailSchema", load_from="email_ids", many=True)
 
 
 class ERPAddressSchema(ERPDocument):
