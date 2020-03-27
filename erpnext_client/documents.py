@@ -8,6 +8,7 @@ from .schemas import (
     ERPCustomerSchema,
     ERPUserSchema,
     ERPContactSchema,
+    ERPContactPhoneSchema,
     ERPAddressSchema,
     ERPDynamicLinkSchema,
     ERPBinSchema,
@@ -131,6 +132,11 @@ class ERPCustomer(ERPResource):
 class ERPContact(ERPResource):
     doctype = "Contact"
     schema = ERPContactSchema
+
+class ERPContactPhone(ERPResource):
+    doctype = "Contact Phone"
+    schema = ERPContactPhoneSchema
+
 
 class ERPAddress(ERPResource):
     doctype = "Address"

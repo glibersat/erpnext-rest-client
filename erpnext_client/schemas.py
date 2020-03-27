@@ -66,11 +66,18 @@ class ERPCustomerSchema(ERPDocument):
     primary_address = fields.String(load_from="primary_address")
 
 
+class ERPContactPhoneSchema(ERPDocument):
+    phone = fields.String(load_from="phone")
+    is_primary_phone = fields.Boolean(load_from="is_primary_phone")
+    is_primary_mobile_no = fields.Boolean(load_from="is_primary_mobile_no")
+
+
 class ERPContactSchema(ERPDocument):
     email = fields.Email(load_from="email_id")
     first_name = fields.String(load_from="first_name")
     last_name = fields.String(load_from="last_name")
     mobile_no = fields.String(load_from="mobile_no")
+    phone_nos = fields.Nested("ERPContactPhoneSchema", load_from="phone_nos", many=True)
 
 
 class ERPAddressSchema(ERPDocument):
