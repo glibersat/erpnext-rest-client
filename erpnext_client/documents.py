@@ -85,6 +85,21 @@ class ERPResource:
 
         return instance
 
+
+    def delete(self, data):
+        """
+        Delete a document of the current type with given data
+        """
+        try:
+            response = self.client.delete_resource(self.doctype, data)
+        except requests.exceptions.HTTPError as e:
+            e.response.raise_for_status()
+
+        instance, errors = self.schema().load(data=response.json())
+
+        return instance
+
+
     def update(self, name, data):
         """
         Update a document of the current type with given name and data

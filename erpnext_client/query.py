@@ -54,6 +54,19 @@ class ERPNextClient:
 
         return r
 
+    def _delete(self, path, data={}):
+        LOGGER.debug("DELETE {0} with payload: {0}".format(path, data))
+
+        r = self.session.delete("{0}{1}".format(self.api_root,
+                                             path),
+                                json=data)
+
+        if r.status_code != requests.codes.ok:
+            r.raise_for_status()
+
+        return r
+
+
     def _post(self, path, data={}):
         if data is not {}:
             LOGGER.debug("POST payload: {0}".format(data))
@@ -127,6 +140,15 @@ class ERPNextClient:
                                                                              data))
         return self._put("resource/{0}/{1}".format(resource_type_name, resource_name),
                          encapsulated_data)
+
+    def delete_resource(self, resource_type_name, resource_name, data={}):
+        encapsulated_data = {"data": json.dumps(data)}
+        LOGGER.debug("DELETING resource <{0}:{1}> with payload <{2}>".format(resource_type_name,
+                                                                             resource_name,
+                                                                             data))
+        return self._delete("resource/{0}/{1}".format(resource_type_name, resource_name),
+                            encapsulated_data)
+
 
 
     def create_resource(self, resource_type_name, data):

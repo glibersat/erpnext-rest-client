@@ -108,10 +108,12 @@ class ERPSalesOrderItemSchema(ERPDocument):
     item_code = fields.String()
     item_name = fields.String()
     description = fields.String()
+    warehouse = fields.String()
     quantity = fields.Int(load_from="qty")
     rate = fields.Float()
     amount = fields.Float(load_from="net_amount")
     image = fields.String(load_from="image")
+    projected_qty = fields.Int(load_from="projected_qty")
 
 
 class ERPJournalEntrySchema(ERPDocument):
