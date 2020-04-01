@@ -107,6 +107,7 @@ class ERPDynamicLinkSchema(ERPDocument):
 class ERPSalesOrderItemSchema(ERPDocument):
     item_code = fields.String()
     item_name = fields.String()
+    item_group = fields.String()
     description = fields.String()
     warehouse = fields.String()
     quantity = fields.Int(load_from="qty")
