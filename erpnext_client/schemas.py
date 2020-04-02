@@ -152,3 +152,16 @@ class ERPWebsiteSlideshowItem(ERPDocument):
 class ERPWebsiteSlideshow(ERPDocument):
     slideshow_items = fields.Nested("ERPWebsiteSlideshowItem", many=True)
 
+
+class ERPDeliveryStopSchema(ERPDocument):
+    customer_address = fields.String()
+    contact = fields.String()
+    address = fields.String()
+    estimated_arrival = fields.String()
+    distance = fields.Int()
+    lat = fields.Float()
+    lng = fields.Float()
+
+class ERPDeliveryTripSchema(ERPDocument):
+    total_distance =  fields.Float()
+    stops = fields.Nested("ERPDeliveryStopSchema", load_from="delivery_stops", many=True)
