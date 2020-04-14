@@ -164,4 +164,6 @@ class ERPDeliveryStopSchema(ERPDocument):
 
 class ERPDeliveryTripSchema(ERPDocument):
     total_distance =  fields.Float()
+    departure_time = fields.String()
+
     stops = fields.Nested("ERPDeliveryStopSchema", load_from="delivery_stops", many=True)
