@@ -6,6 +6,7 @@ class ERPDocument(Schema):
     Base ERPNext Document
     """
     name = fields.String()
+    status = fields.String()
 
 
 class ERPUserSchema(ERPDocument):
@@ -28,7 +29,7 @@ class ERPItemSchema(ERPDocument):
     slideshow = fields.String()
     has_variants = fields.Boolean(load_from="has_variants")
     variants = fields.Nested("ERPItemSchema", many=True)
-    website_specifications = fields.Nested('ERPItemWebsiteSpecificationSchema', many=True, load_from='website_sepecifications')
+    website_specifications = fields.Nested('ERPItemWebsiteSpecificationSchema', many=True, load_from='website_specifications')
 
 class ERPItemPriceSchema(ERPDocument):
     item_code = fields.String(load_from="item_code")
@@ -127,6 +128,9 @@ class ERPSalesOrderTaxes(ERPDocument):
     tax_amount = fields.Float(load_from="tax_amount")
 
 
+class ERPShippingRuleSchema(ERPDocument):
+    pass
+
 class ERPSalesOrderSchema(ERPDocument):
     date = fields.Date(load_from="transaction_date")
     title = fields.Str()
@@ -135,6 +139,7 @@ class ERPSalesOrderSchema(ERPDocument):
     amount_total = fields.Float(load_from="grand_total")
     items = fields.Nested(ERPSalesOrderItemSchema, many=True)
     taxes = fields.Nested(ERPSalesOrderTaxes, many=True)
+    shipping_rule = fields.Str()
 
 
 class ERPItemWebsiteSpecificationSchema(ERPDocument):
