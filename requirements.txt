@@ -2,3 +2,4 @@ coloredlogs
 requests
 requests-oauthlib
 oauthlib
+marshmallow==2.21.0

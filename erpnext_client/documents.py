@@ -12,12 +12,13 @@ from .schemas import (
     ERPDeliveryTripSchema,
     ERPContactPhoneSchema,
     ERPAddressSchema,
+    ERPDeliveryNoteSchema,
     ERPDynamicLinkSchema,
     ERPBinSchema,
     ERPDeliveryTripSchema,
     ERPJournalEntrySchema,
     ERPWebsiteSlideshow,
-    ERPWebsiteSlideshowItem
+    ERPWebsiteSlideshowItem,
 )
 
 
@@ -26,6 +27,7 @@ class ERPResource:
         """
         When an object isn't found on the server
         """
+
         pass
 
     def __init__(self, aERPNextClient):
@@ -40,27 +42,36 @@ class ERPResource:
             else:
                 e.response.raise_for_status()
 
-        instance, errors = self.schema(strict=True).load(data=response.json()['data'])
+        instance, errors = self.schema(strict=True).load(data=response.json()["data"])
 
         return instance
 
-    def list(self, erp_fields=[], filters=[], schema_fields=None, parent=None, page_length=None):
+    def list(
+        self,
+        erp_fields=[],
+        filters=[],
+        schema_fields=None,
+        parent=None,
+        page_length=None,
+    ):
         """
         Return a list of documents matching the given criterias
         """
         try:
-            response = self.client.list_resource(self.doctype,
-                                                 fields=erp_fields,
-                                                 filters=filters,
-                                                 parent=parent,
-                                                 page_length=page_length)
+            response = self.client.list_resource(
+                self.doctype,
+                fields=erp_fields,
+                filters=filters,
+                parent=parent,
+                page_length=page_length,
+            )
         except requests.exceptions.HTTPError as e:
             print(e.response.text)
             e.response.raise_for_status()
 
-
-        instances, errors = self.schema(partial=schema_fields,
-                                        many=True).load(data=response.json()['data'])
+        instances, errors = self.schema(partial=schema_fields, many=True).load(
+            data=response.json()["data"]
+        )
 
         return instances
 
@@ -83,10 +94,9 @@ class ERPResource:
         except requests.exceptions.HTTPError as e:
             e.response.raise_for_status()
 
-        instance, errors = self.schema().load(data=response.json()['data'])
+        instance, errors = self.schema().load(data=response.json()["data"])
 
         return instance
-
 
     def delete(self, data):
         """
@@ -101,7 +111,6 @@ class ERPResource:
 
         return instance
 
-
     def update(self, name, data):
         """
         Update a document of the current type with given name and data
@@ -112,7 +121,6 @@ class ERPResource:
             e.response.raise_for_status()
 
         return response
-
 
 
 class ERPDynamicLink(ERPResource):
@@ -128,8 +136,6 @@ class ERPItemPrice(ERPResource):
 class ERPItem(ERPResource):
     doctype = "Item"
     schema = ERPItemSchema
-
-
 
 
 class ERPBin(ERPResource):
@@ -151,13 +157,20 @@ class ERPContact(ERPResource):
     doctype = "Contact"
     schema = ERPContactSchema
 
+
 class ERPContactPhone(ERPResource):
     doctype = "Contact Phone"
     schema = ERPContactPhoneSchema
 
+
 class ERPContactEmail(ERPResource):
     doctype = "Contact Email"
     schema = ERPContactEmailSchema
+
+
+class ERPDeliveryNote(ERPResource):
+    doctype = "Delivery Note"
+    schema = ERPDeliveryNoteSchema
 
 
 class ERPDeliveryTrip(ERPResource):
@@ -179,6 +192,7 @@ class ERPUser(ERPResource):
     doctype = "User"
     schema = ERPUserSchema
 
+
 class ERPJournalEntry(ERPResource):
     doctype = "Journal Entry"
     schema = ERPJournalEntrySchema
@@ -192,5 +206,3 @@ class ERPWebsiteSlideshow(ERPResource):
 class ERPWebsiteSlideshowItem(ERPResource):
     doctype = "Website Slideshow Item"
     schema = ERPWebsiteSlideshowItem
-
-
